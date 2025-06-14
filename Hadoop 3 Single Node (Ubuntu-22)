@@ -1,0 +1,160 @@
+                        #####################################################
+                        		          Hadoop 3 Single Node
+                        #####################################################
+
+
+# Hadoop runs on Java, so we need java package
+
+# Install Java
+sudo apt-get update
+sudo apt install openjdk-8-jdk openjdk-8-jre -y
+sudo apt update
+sudo apt install openjdk-8-jdk openjdk-8-jre -y
+
+java -version
+
+# Running Hadoop as root is insecure. hduser is isolated and safer for configuration and permissions.
+
+#Create a Hadoop user for accessing HDFS and MapReduce
+sudo addgroup hadoop
+sudo adduser hduser --ingroup hadoop 
+sudo adduser hduser sudo
+sudo su - hduser
+
+# Hadoop uses SSH (even on localhost) to manage services like starting/stopping daemons.
+
+# Configure SSH
+ssh-keygen
+cd .ssh
+cat id_rsa.pub >> authorized_keys
+ssh localhost
+
+
+# Download Hadoop
+
+wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.4.1.tar.gz
+
+#Extract and Install Hadoop tar ball
+tar -xzvf hadoop-3.4.1.tar.gz
+sudo mv hadoop-3.4.1 /usr/local/hadoop
+sudo chown hduser:hadoop -R /usr/local/hadoop
+
+
+# Set Enviornment Variables, These variables allow Hadoop to find its own and Java binaries.
+readlink -f $(which java)
+nano ~/.bashrc
+
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin
+export PATH=$PATH:$HADOOP_HOME/sbin
+export PATH=$PATH:/usr/local/hadoop/bin/
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+
+source ~/.bashrc
+
+cd /usr/local/hadoop/etc/hadoop/
+
+# Update hadoop-env.sh (to configure hadoop environment variables)
+nano hadoop-env.sh
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export HADOOP_LOG_DIR=/var/log/hadoop
+sudo mkdir /var/log/hadoop
+sudo chown hduser:hadoop -R /var/log/hadoop
+
+#Update core-site.xml (contains cluster wide configuration, it tells hadoop where the name node is running)
+nano core-site.xml
+ <property>
+  <name>fs.defaultFS</name>
+  <value>hdfs://localhost:54310</value>
+</property>
+
+
+# Update mapred-site.xml (Configures MapReduce to run over YARN)
+nano mapred-site.xml
+<property>
+  <name>mapreduce.jobtracker.address</name>
+  <value>localhost:54311</value>
+   </property>
+<property>
+   <name>mapreduce.framework.name</name>
+   <value>yarn</value>
+ </property>
+<property>
+  <name>yarn.app.mapreduce.am.env</name>
+  <value>HADOOP_MAPRED_HOME=$HADOOP_MAPRED_HOME</value>
+</property>
+<property>
+  <name>mapreduce.map.env</name>
+  <value>HADOOP_MAPRED_HOME=$HADOOP_MAPRED_HOME</value>
+</property>
+<property>
+  <name>mapreduce.reduce.env</name>
+  <value>HADOOP_MAPRED_HOME=$HADOOP_MAPRED_HOME</value>
+</property>
+
+
+# Update hdfs-site.xml (Sets HDFS replication to 1 since it's a single-node setup)
+sudo mkdir -p /usr/local/hadoop_store/hdfs/namenode
+sudo mkdir -p /usr/local/hadoop_store/hdfs/datanode
+sudo chown -R hduser:hadoop /usr/local/hadoop_store
+nano hdfs-site.xml
+<property> 
+<name>dfs.replication</name>
+  <value>1</value>
+ </property>
+ <property>
+   <name>dfs.namenode.name.dir</name>
+   <value>file:/usr/local/hadoop_store/hdfs/namenode</value>
+ </property>
+ <property>
+   <name>dfs.datanode.data.dir</name>
+   <value>file:/usr/local/hadoop_store/hdfs/datanode</value>
+ </property>
+
+
+# Update yarn-site.xml (Required for MapReduce jobs to shuffle data across stages)
+nano yarn-site.xml
+<property>
+      <name>yarn.nodemanager.aux-services</name>
+      <value>mapreduce_shuffle</value>
+   </property>
+<property>
+        <name>yarn.nodemanager.env-whitelist</name>
+        <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>
+  </property>
+
+
+# Format Namenode (Initializes the filesystem metadata for HDFS)
+hdfs namenode -format
+
+start-dfs.sh
+start-yarn.sh
+
+# start-dfs.sh: Starts NameNode and DataNode
+
+# start-yarn.sh: Starts ResourceManager and NodeManager
+
+
+jps
+
+
+
+hdfs dfs -mkdir /user
+hdfs dfs -mkdir /user/hduser
+hdfs dfs -put hadoop-3.4.1.tar.gz /user/hduser
+
+yarn jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-*examples*.jar pi 5 10
+
+| Component       | URL                      |
+| --------------- | ------------------------ |
+| NameNode        | `http://localhost:9870/` |
+| ResourceManager | `http://localhost:8088/` |
+
+WebUI
+NN:9870
+
