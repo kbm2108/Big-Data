@@ -66,7 +66,7 @@ export HADOOP_LOG_DIR=/var/log/hadoop
 sudo mkdir /var/log/hadoop
 sudo chown hduser:hadoop -R /var/log/hadoop
 
-#Update core-site.xml (contains cluster wide configuration, it tells hadoop where the name node is running)
+# Update core-site.xml (contains cluster wide configuration, it tells hadoop where the name node is running)
 nano core-site.xml
  <property>
   <name>fs.defaultFS</name>
