@@ -117,6 +117,7 @@ $ sudo update-rc.d disable-transparent-hugepages defaults
 # Set Swappiness
 sudo sysctl -a | grep vm.swappiness
 sudo sysctl vm.swappiness=1
+sudo sysctl -p (to add permanently)
 
 # Configure NTP 
 timedatectl status
