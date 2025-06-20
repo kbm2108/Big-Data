@@ -3,7 +3,7 @@
 ssh -i Downloads/file.pem ubuntu@public_dns_address
 
 # Update the system
-sudo apt-get update && apt-get dist-upgrade
+sudo apt-get update && sudo apt-get dist-upgrade -y
 
 # apt-get upgrade Upgrades only existing packages without removing or adding packages
 # apt-get dist-upgrade  Upgrades packages and resolves dependency changes (can add/remove)
