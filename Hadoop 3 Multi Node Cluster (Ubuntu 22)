@@ -111,6 +111,16 @@ $ sudo chmod 755 /etc/init.d/disable-transparent-hugepages
 
 $ sudo update-rc.d disable-transparent-hugepages defaults
 
+OR 
+
+Open the GRUB config file:
+
+sudo vi /etc/default/grub
+Add the following to the GRUB_CMDLINE_LINUX line:
+transparent_hugepage=never
+Update GRUB config
+sudo update-grub
+
 >>Restart server
 
 
