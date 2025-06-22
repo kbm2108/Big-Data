@@ -16,7 +16,9 @@ sudo apt install python -y
 curl 'https://bootstrap.pypa.io/pip/2.7/get-pip.py' > get-pip.py && sudo python get-pip.py
 sudo pip install psycopg2==2.7.5 --ignore-installed
 
-Create a AMI
+Create a AMI, wait for the AMI to get created
+
+# Download and install cloudera manager installer
 
 wget https://archive.cloudera.com/cm7/7.4.4/cloudera-manager-installer.bin
 chmod u+x <file name>
