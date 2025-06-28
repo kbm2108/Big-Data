@@ -29,3 +29,4 @@ Cloudera Manager http port : 7180
 Cloudera Manager http port : 7183
 NN port: 9870
 RM port: 8088
+Job History Server port: 19888
