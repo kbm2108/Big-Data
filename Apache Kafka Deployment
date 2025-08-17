@@ -231,12 +231,12 @@ exit
 
 ssh zk2 
 sudo su
-echo '/dev/xvdf /data/kafka xfs defaults 0 0' >> /etc/fstab
+echo '/dev/nvme1n1 /data/kafka xfs defaults 0 0' >> /etc/fstab
 exit
 
 ssh zk3
 sudo su
-echo '/dev/xvdf /data/kafka xfs defaults 0 0' >> /etc/fstab
+echo '/dev/nvme1n1 /data/kafka xfs defaults 0 0' >> /etc/fstab
 exit
 
 dsh -a sudo cat /etc/fstab
