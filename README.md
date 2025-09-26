@@ -1,1 +1,1 @@
-# This repo contains all my documentations related to Big Data
+# This repo contains all my scripts related to Big Data
