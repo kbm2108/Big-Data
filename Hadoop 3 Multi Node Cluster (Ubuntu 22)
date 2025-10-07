@@ -126,8 +126,11 @@ sudo update-grub
 
 # Set Swappiness
 sudo sysctl -a | grep vm.swappiness
-sudo sysctl vm.swappiness=1
-sudo sysctl -p (to add permanently)
+sudo sysctl -w vm.swappiness=1
+echo "vm.swappiness=1" | sudo tee -a /etc/sysctl.conf
+
+# To  apply the changes without rebooting the system
+sudo sysctl -p 
 
 # Configure NTP 
 timedatectl status
