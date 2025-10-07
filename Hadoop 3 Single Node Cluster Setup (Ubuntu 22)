@@ -73,6 +73,38 @@ nano core-site.xml
   <value>hdfs://localhost:54310</value>
 </property>
 
+# Update hdfs-site.xml (Sets HDFS replication to 1 since it's a single-node setup) 
+# We specify where the data of namenode and datanode will be stored with property dfs.namenode.name.dir and dfs.datanode.data.dir
+
+nano hdfs-site.xml
+<property> 
+<name>dfs.replication</name>
+  <value>1</value>
+ </property>
+ <property>
+   <name>dfs.namenode.name.dir</name>
+   <value>file:/usr/local/hadoop_store/hdfs/namenode</value>
+ </property>
+ <property>
+   <name>dfs.datanode.data.dir</name>
+   <value>file:/usr/local/hadoop_store/hdfs/datanode</value>
+ </property>
+
+# Create the directories
+sudo mkdir -p /usr/local/hadoop_store/hdfs/namenode
+sudo mkdir -p /usr/local/hadoop_store/hdfs/datanode
+sudo chown -R hduser:hadoop /usr/local/hadoop_store
+
+# Update yarn-site.xml (We are telling yarn to run mapreduce)
+nano yarn-site.xml
+<property>
+      <name>yarn.nodemanager.aux-services</name>
+      <value>mapreduce_shuffle</value>
+   </property>
+<property>
+        <name>yarn.nodemanager.env-whitelist</name>
+        <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>
+  </property>
 
 # Update mapred-site.xml (Configures MapReduce to run over YARN)
 nano mapred-site.xml
@@ -98,40 +130,6 @@ nano mapred-site.xml
 </property>
 
 
-# Update hdfs-site.xml (Sets HDFS replication to 1 since it's a single-node setup) 
-# We specify where the data of namenode and datanode will be stored with property dfs.namenode.name.dir and dfs.datanode.data.dir
-
-nano hdfs-site.xml
-<property> 
-<name>dfs.replication</name>
-  <value>1</value>
- </property>
- <property>
-   <name>dfs.namenode.name.dir</name>
-   <value>file:/usr/local/hadoop_store/hdfs/namenode</value>
- </property>
- <property>
-   <name>dfs.datanode.data.dir</name>
-   <value>file:/usr/local/hadoop_store/hdfs/datanode</value>
- </property>
-
-# Create the directories
-sudo mkdir -p /usr/local/hadoop_store/hdfs/namenode
-sudo mkdir -p /usr/local/hadoop_store/hdfs/datanode
-sudo chown -R hduser:hadoop /usr/local/hadoop_store
-
-# Update yarn-site.xml (Required for MapReduce jobs to shuffle data across stages)
-nano yarn-site.xml
-<property>
-      <name>yarn.nodemanager.aux-services</name>
-      <value>mapreduce_shuffle</value>
-   </property>
-<property>
-        <name>yarn.nodemanager.env-whitelist</name>
-        <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>
-  </property>
-
-
 # Format Namenode (Initializes the filesystem metadata for HDFS)
 hdfs namenode -format
 
@@ -142,10 +140,7 @@ start-yarn.sh
 
 # start-yarn.sh: Starts ResourceManager and NodeManager
 
-
 jps
-
-
 
 hdfs dfs -mkdir /user
 hdfs dfs -mkdir /user/hduser
