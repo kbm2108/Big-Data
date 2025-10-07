@@ -32,11 +32,11 @@ ssh localhost
 
 # Download Hadoop
 
-wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.4.1.tar.gz
+wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.4.2.tar.gz
 
 #Extract and Install Hadoop tar ball
-tar -xzvf hadoop-3.4.1.tar.gz
-sudo mv hadoop-3.4.1 /usr/local/hadoop
+tar -xzvf hadoop-3.4.2.tar.gz
+sudo mv hadoop-3.4.2 /usr/local/hadoop
 sudo chown hduser:hadoop -R /usr/local/hadoop
 
 
@@ -146,7 +146,7 @@ jps
 
 hdfs dfs -mkdir /user
 hdfs dfs -mkdir /user/hduser
-hdfs dfs -put hadoop-3.4.1.tar.gz /user/hduser
+hdfs dfs -put hadoop-3.4.2.tar.gz /user/hduser
 
 yarn jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-*examples*.jar pi 5 10
 
