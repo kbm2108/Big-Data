@@ -98,10 +98,9 @@ nano mapred-site.xml
 </property>
 
 
-# Update hdfs-site.xml (Sets HDFS replication to 1 since it's a single-node setup)
-sudo mkdir -p /usr/local/hadoop_store/hdfs/namenode
-sudo mkdir -p /usr/local/hadoop_store/hdfs/datanode
-sudo chown -R hduser:hadoop /usr/local/hadoop_store
+# Update hdfs-site.xml (Sets HDFS replication to 1 since it's a single-node setup) 
+# We specify where the data of namenode and datanode will be stored with property dfs.namenode.name.dir and dfs.datanode.data.dir
+
 nano hdfs-site.xml
 <property> 
 <name>dfs.replication</name>
@@ -116,6 +115,10 @@ nano hdfs-site.xml
    <value>file:/usr/local/hadoop_store/hdfs/datanode</value>
  </property>
 
+# Create the directories
+sudo mkdir -p /usr/local/hadoop_store/hdfs/namenode
+sudo mkdir -p /usr/local/hadoop_store/hdfs/datanode
+sudo chown -R hduser:hadoop /usr/local/hadoop_store
 
 # Update yarn-site.xml (Required for MapReduce jobs to shuffle data across stages)
 nano yarn-site.xml
