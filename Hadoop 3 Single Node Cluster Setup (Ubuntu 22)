@@ -133,19 +133,18 @@ nano mapred-site.xml
 # Format Namenode (Initializes the filesystem metadata for HDFS)
 hdfs namenode -format
 
+# Start hdfs,starts NameNode and DataNode
 start-dfs.sh
+
+# Start yarn, starts ResourceManager and NodeManager
 start-yarn.sh
-
-# start-dfs.sh: Starts NameNode and DataNode
-
-# start-yarn.sh: Starts ResourceManager and NodeManager
 
 jps
 
-hdfs dfs -mkdir /user
-hdfs dfs -mkdir /user/hduser
+hdfs dfs -mkdir -p /user/hduser
 hdfs dfs -put hadoop-3.4.2.tar.gz /user/hduser
 
+# Test
 yarn jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-*examples*.jar pi 5 10
 
 | Component       | URL                      |
@@ -153,6 +152,5 @@ yarn jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-*examples*.jar pi 5 10
 | NameNode        | `http://localhost:9870/` |
 | ResourceManager | `http://localhost:8088/` |
 
-WebUI
-NN:9870
+
 
