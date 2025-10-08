@@ -36,9 +36,9 @@ java -version
 
 # Download and Install Hadoop
 
-wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.4.1.tar.gz
-tar -xzvf hadoop-3.4.1.tar.gz
-sudo mv hadoop-3.4.1 /usr/local/hadoop
+wget https://dlcdn.apache.org/hadoop/common/stable/hadoop-3.4.2.tar.gz
+tar -xzvf hadoop-3.4.2.tar.gz
+sudo mv hadoop-3.4.2 /usr/local/hadoop
 sudo chown -R hduser:hadoop /usr/local/hadoop
 
 # Set Enviornment Variable
@@ -275,7 +275,7 @@ dsh -a jps (to verify)
 
 hdfs dfs -mkdir /user
 hdfs dfs -mkdir /user/ubuntu
-hdfs dfs -put hadoop-3.4.1.tar.gz /user/ubuntu
+hdfs dfs -put hadoop-3.4.2.tar.gz /user/ubuntu
 hdfs dfs -ls 
 hdfs dfs -ls -R
 
