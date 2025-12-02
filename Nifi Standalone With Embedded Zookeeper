@@ -1,6 +1,88 @@
-# Installing and configuring Nifi ver 2.6
-
+*************Performance Tuning Pre-requisites ********************
 sudo apt update
+# Disable FireWall iptables
+sudo iptables -L -n
+sudo ufw status
+sudo ufw disable
+
+# Disable Transparent Hugepage Compaction
+cat /sys/kernel/mm/transparent_hugepage/defrag
+
+$ sudo nano /etc/init.d/disable-transparent-hugepages
+
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          disable-transparent-hugepages
+# Required-Start:    $local_fs
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Disable Linux transparent huge pages
+# Description:       Disable Linux transparent huge pages, to improve
+#                    database performance.
+### END INIT INFO
+
+case $1 in
+  start)
+    if [ -d /sys/kernel/mm/transparent_hugepage ]; then
+      thp_path=/sys/kernel/mm/transparent_hugepage
+    elif [ -d /sys/kernel/mm/redhat_transparent_hugepage ]; then
+      thp_path=/sys/kernel/mm/redhat_transparent_hugepage
+    else
+      return 0
+    fi
+
+    echo 'never' > ${thp_path}/enabled
+    echo 'never' > ${thp_path}/defrag
+
+    unset thp_path
+    ;;
+esac
+
+$ sudo chmod 755 /etc/init.d/disable-transparent-hugepages
+
+$ sudo update-rc.d disable-transparent-hugepages defaults
+
+# Set Swappiness
+sudo sysctl -a | grep vm.swappiness
+echo "vm.swappiness=0" | sudo tee -a /etc/sysctl.conf
+
+# To  apply the changes without rebooting the system
+sudo sysctl -p 
+
+# Configure NTP 
+timedatectl status
+timedatectl list-timezones
+sudo timedatectl set-timezone Asia/Kolkata
+sudo apt install ntp -y
+
+# Maximum File Handles
+NiFi will at any one time potentially have a very large number of file handles open. Increase the limits by editing /etc/security/limits.conf
+
+*  hard  nofile  50000
+*  soft  nofile  50000
+
+# Maximum Forked Processes
+NiFi may be configured to generate a significant number of threads. To increase the allowable number, edit /etc/security/limits.conf
+
+*  hard  nproc  10000
+*  soft  nproc  10000
+
+# Your distribution may require an edit to /etc/security/limits.d/90-nproc.conf by adding
+
+*  soft  nproc  10000
+
+# Increase the number of TCP socket ports available
+This is particularly important if your flow will be setting up and tearing down a large number of sockets in a small period of time.
+
+sudo sysctl -w net.ipv4.ip_local_port_range="10000 65000"
+
+# Set how long sockets stay in a TIMED_WAIT state when closed
+You don’t want your sockets to sit and linger too long given that you want to be able to quickly setup and teardown new sockets.
+
+sudo sysctl -w net.netfilter.nf_conntrack_tcp_timeout_time_wait="1"
+
+******************* Installing and configuring Nifi ver 2.6 ************************
 
 # We need Java version 21 for this Nifi version
 sudo apt install openjdk-21-jdk unzip -y
