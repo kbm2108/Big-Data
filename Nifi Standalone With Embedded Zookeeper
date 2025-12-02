@@ -1,0 +1,55 @@
+# Installing and configuring Nifi ver 2.6
+
+sudo apt update
+
+# We need Java version 21 for this Nifi version
+sudo apt install openjdk-21-jdk unzip -y
+wget https://archive.apache.org/dist/nifi/2.6.0/nifi-2.6.0-bin.zip
+unzip https://archive.apache.org/dist/nifi/2.6.0/nifi-2.6.0-bin.zip
+sudo mv nifi-2.6.0 /opt/nifi
+sudo chown ubuntu:ubuntu -R /opt/nifi
+
+# Setup Nifi configration in nifi.properties
+nifi.web.http.host=<Server_DNS>
+nifi.web.http.port=8080
+nifi.state.management.embedded.zookeeper.start=true 
+
+# For cluster mode you can use nifi.cluster.is.node=true
+# nifi.cluster.node.address=<Server_DNS>
+# nifi.cluster.node.protocol.port=11122
+
+# We are not enabling secure protocol but we can do that
+nifi.remote.input.secure=false 
+nifi.web.http.host=<Server_DNS>
+nifi.web.http.port=8080
+
+# Hash out entries nifi.web.https.host=localhost & nifi.web.https.port=8443
+
+nifi.sensitive.props.key=<Strong_12_char_password>
+
+# If you are using in cluster mode , change this to true 
+nifi.cluster.is.node=false
+
+#nifi.cluster.node.address=<Server_DNS>
+#nifi.cluster.node.protocol.port=11122
+
+# zookeeper properties, used for cluster management #
+nifi.zookeeper.connect.string=<ZK_Server_DNS:2181>
+
+# Setup Zookeeper properties under /opt/nifi/conf/nifi.properties
+server.1=<ZK_Server_DNS:2888:3888;2181>
+  
+# Setup Nifi Env variables
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+
+# Start Nifi
+cd /opt/nifi/bin
+./nifi.sh start
+
+# Check logs /opt/nifi/logs
+tail -f nifi-app.log
+# Any startup issues check 
+nifi-bootstrap.log
+
+
+
